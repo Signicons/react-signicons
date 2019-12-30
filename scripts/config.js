@@ -1,3 +1,3 @@
 module.exports = {
-	inputDir: '../signicons/svg/raw'
+	inputDir: '../signicons/svg/optimized'
 }
