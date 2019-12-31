@@ -54,17 +54,35 @@ function createExportFileTemplate(data) {
 	)
 }
 
+function createIconMapTemplate(data) {
+	return (
+		"{\n"
+		+ "\t" + JSON.stringify('iconsMap') + ": [\n"
+		+ data.map(d => "\t\t" + JSON.stringify(`sg${pascalCase(d)}`)).join(",\n")
+		+ "\n\t]\n"
+		+ "}"
+	)
+}
+
 function writeExportsFile(input) {
 	let files = readdirSync(input, 'utf8')
 	let exportFilePaths = []
 	let iconArrayRenderHelper = []
+	let iconMap = []
 	files.map(f => {
 		let removeExtFilename = f.split('.').slice(0,-1).join('.')
 		exportFilePaths.push(`export { sg${pascalCase(removeExtFilename)} } from './signicons/${removeExtFilename}'`)
 		iconArrayRenderHelper.push(removeExtFilename)
+		iconMap.push(removeExtFilename)
 	})
 	let exportFileTemplate = createExportFileTemplate(exportFilePaths)
 	let exportFileTemplatePath = './src/icons/index.ts'
+	let exportIconsMapTemplate = createIconMapTemplate(iconMap)
+	let exportIconsMapFilePath = './src/icons/signicons-map.json'
+	writeFile(exportIconsMapFilePath, exportIconsMapTemplate, err => {
+		if (err) throw err
+		console.log(`Finished writing file: ${exportIconsMapFilePath}`)
+	})
 	return writeFile(exportFileTemplatePath, exportFileTemplate, 'utf8', err => {
 		if (err) throw err
 		console.log(`Finished writing file: ${exportFileTemplatePath}`)
