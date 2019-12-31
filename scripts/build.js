@@ -3,6 +3,7 @@ const { parseString } = require('xml2js-parser')
 const { inspect } = require('util')
 const prettyJs = require('pretty-js')
 const { inputDir } = require('./config')
+const pascalCase = require('pascalcase')
 
 function parseIcons(input) {
 	let files = readdirSync(input, 'utf8')
@@ -16,8 +17,7 @@ function parseIcons(input) {
 			let width = result.svg.$.width
 			let height = result.svg.$.height
 			let path = result.svg.path[0].$.d
-			let color = result.svg.path[0].$.fill || 'currentColor'
-			result = { title, xmlns, viewBox, width, height, path, color }
+			result = { title, xmlns, viewBox, width, height, path }
 			let data = inspect(result, false, null)
 			let template = createTemplate(data, title)
 			let templateFilePath = `./src/icons/signicons/${title}`
@@ -30,7 +30,7 @@ function parseIcons(input) {
 }
 
 function createTemplate(data, name) {
-	let nameWithPrefix = `sg_${name}`
+	let nameWithPrefix = `sg${pascalCase(name)}`
 	return (
 		"import { SigniconsInterface } from " + "\"../\"" +
 		"\n\n" +
@@ -42,13 +42,12 @@ function createTemplate(data, name) {
 function createExportFileTemplate(data) {
 	return (
 		"export interface SigniconsInterface " + "{" + "\n" +
-			"\treadonly title: string,\n" +
+			"\treadonly title?: string,\n" +
 			"\treadonly xmlns: string,\n" +
 			"\treadonly viewBox: string, \n" +
 			"\treadonly width: string | number, \n" +
 			"\treadonly height: string | number, \n" +
-			"\treadonly path: string, \n" +
-			"\treadonly color?: string\n"
+			"\treadonly path: string, \n"
 		+ "}"
 		+ "\n\n"
 		+ data.map(d => d).join("\n")
@@ -61,7 +60,7 @@ function writeExportsFile(input) {
 	let iconArrayRenderHelper = []
 	files.map(f => {
 		let removeExtFilename = f.split('.').slice(0,-1).join('.')
-		exportFilePaths.push(`export { sg_${removeExtFilename} } from './icons/signicons/${removeExtFilename}'`)
+		exportFilePaths.push(`export { sg${pascalCase(removeExtFilename)} } from './signicons/${removeExtFilename}'`)
 		iconArrayRenderHelper.push(removeExtFilename)
 	})
 	let exportFileTemplate = createExportFileTemplate(exportFilePaths)

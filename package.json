@@ -24,6 +24,7 @@
 	},
 	"devDependencies": {
 		"@types/react": "16.9.17",
+		"pascalcase": "^1.0.0",
 		"pretty-js": "0.2.1",
 		"react": "16.12.0",
 		"rimraf": "3.0.0",
@@ -39,7 +40,6 @@
 		"build-js": "npx tsc -p .",
 		"build-icons": "node scripts/build.js",
 		"clean": "rimraf ./dist/* && rimraf ./src/signicons/icons/*",
-		"svg-optimize": "npx svgo -f ../svg/signicons/* -o ./src/svg --config=./.svgo.yml",
 		"dev": "npm run build -- -w"
 	}
 }

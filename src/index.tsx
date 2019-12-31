@@ -16,7 +16,7 @@ const Signicon: FunctionComponent<IconProps> = (props: IconProps) => {
 			height={symbol.height}>
 			<path
 				d={symbol.path}
-				fill={symbol.color} />
+				fill='currentColor' />
 		</svg>
 	)
 }
